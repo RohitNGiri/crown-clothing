@@ -3,9 +3,11 @@ import React from 'react';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-buttom.components';
 
-import { signInWithGoogle } from '../../firebase/firebase.utils';
+import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
 
 import './sign-in.styles.scss';
+import SignInAndSignUp from '../../pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
+
 
 class SignIn extends React.Component {
     constructor(props) {
@@ -17,10 +19,18 @@ class SignIn extends React.Component {
         };
     }
 
-    handleSubmit = event => {
+    handleSubmit = async event => {
         event.preventDefault();
+        const { email, password } = this.state;
 
-        this.setState({ email: '', password: '' });
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            this.setState({ email: '', password: '' });
+
+        } catch (error) {
+            console.log(error);
+        }
+
     };
 
     handleChange = event => {
@@ -41,7 +51,7 @@ class SignIn extends React.Component {
                         type='email'
                         handleChange={this.handleChange}
                         value={this.state.email}
-                        label='E-mail'
+                        label='email'
                         required
                     />
                     <FormInput
@@ -49,11 +59,11 @@ class SignIn extends React.Component {
                         type='password'
                         value={this.state.password}
                         handleChange={this.handleChange}
-                        label='Password'
+                        label='password'
                         required
                     />
                     <div className='buttons'>
-                        <CustomButton type='submit'> Sign in </CustomButton>&nbsp;&nbsp;
+                        <CustomButton type='submit'> Sign in </CustomButton>
                         <CustomButton onClick={signInWithGoogle} isGoogleSignIn>
                             Sign in with Google
                         </CustomButton>
@@ -63,5 +73,6 @@ class SignIn extends React.Component {
         );
     }
 }
+
 
 export default SignIn;
